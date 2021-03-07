@@ -84,6 +84,7 @@ func loadKustFile(ldr ifc.Loader) ([]byte, error) {
 	var content []byte
 	match := 0
 	for _, kf := range konfig.RecognizedKustomizationFileNames() {
+		fmt.Println("kf file:", kf)
 		c, err := ldr.Load(kf)
 		if err == nil {
 			match += 1

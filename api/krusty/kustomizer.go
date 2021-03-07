@@ -106,5 +106,6 @@ func (b *Kustomizer) Run(
 		t.Transform(m)
 	}
 	m.RemoveBuildAnnotations()
+	fmt.Println("m: ", m)
 	return m, nil
 }

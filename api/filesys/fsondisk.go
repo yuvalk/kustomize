@@ -4,6 +4,7 @@
 package filesys
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -100,8 +101,34 @@ func (fsOnDisk) IsDir(name string) bool {
 	return info.IsDir()
 }
 
+func (fsOnDisk) ReadFileByLines(path string) (c []byte, err error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	b := []byte(path)
+	var lines []byte
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := append(b, scanner.Bytes()...)
+		lines = append(lines, line...)
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return lines, err
+}
+
 // ReadFile delegates to ioutil.ReadFile.
-func (fsOnDisk) ReadFile(name string) ([]byte, error) { return ioutil.ReadFile(name) }
+func (x fsOnDisk) ReadFile(name string) ([]byte, error) {
+	fmt.Println("!!", name, "!!!")
+	return x.ReadFileByLines(name)
+}
 
 // WriteFile delegates to ioutil.WriteFile with read/write permissions.
 func (fsOnDisk) WriteFile(name string, c []byte) error {

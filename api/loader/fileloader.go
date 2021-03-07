@@ -327,6 +327,7 @@ func (fl *fileLoader) Load(path string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("path: ", path)
 	return fl.fSys.ReadFile(path)
 }
 

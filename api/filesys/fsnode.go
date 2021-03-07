@@ -4,6 +4,7 @@
 package filesys
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"log"
@@ -367,6 +368,29 @@ func (n *fsNode) Close() error {
 	return nil
 }
 
+func (n *fsNode) ReadFileByLines(path string) (c []byte, err error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	b := []byte(path)
+	var lines []byte
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := append(b, scanner.Bytes()...)
+		lines = append(lines, line...)
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return lines, err
+}
+
 // ReadFile implements FileSystem.
 func (n *fsNode) ReadFile(path string) (c []byte, err error) {
 	result, err := n.Find(path)
@@ -376,8 +400,9 @@ func (n *fsNode) ReadFile(path string) (c []byte, err error) {
 	if result == nil {
 		return nil, fmt.Errorf("cannot find '%s' to read it", path)
 	}
-	c = make([]byte, len(result.content))
-	_, err = result.Read(c)
+
+	c, err = n.ReadFileByLines(path)
+	fmt.Println(string(c))
 	return c, err
 }
 
