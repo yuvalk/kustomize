@@ -10,6 +10,6 @@ RUN go mod download
 COPY main.go .
 RUN go build -v -o /usr/local/bin/config-function ./
 
-FROM alpine:latest
+FROM alpine:3.23.3
 COPY --from=0 /usr/local/bin/config-function /usr/local/bin/config-function
 CMD ["config-function"]
